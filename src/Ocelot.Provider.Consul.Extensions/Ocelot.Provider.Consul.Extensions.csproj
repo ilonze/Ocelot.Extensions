@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Lonze</Authors>
+    <Company>Lonze</Company>
+    <Description>Extensions for Ocelot.Provider.Consul, repair any bug for Ocelot.Provider.Consul.</Description>
+    <AssemblyVersion>16.0.1.0</AssemblyVersion>
+    <FileVersion>16.0.1.0</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>16.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ocelot.Provider.Consul" Version="16.0.1" />
+  </ItemGroup>
+
+</Project>
