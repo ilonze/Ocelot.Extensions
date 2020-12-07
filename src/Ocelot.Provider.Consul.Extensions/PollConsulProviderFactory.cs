@@ -17,8 +17,6 @@ namespace Ocelot.Provider.Consul.Extensions
 
             var consulFactory = services.GetService<IConsulClientFactory>();
 
-            var factories = services.GetRequiredService<IEnumerable<ServiceDiscoveryProviderFactory>>();
-
             var consulRegistryConfiguration = new ConsulRegistryConfiguration(config.Scheme, config.Host, config.Port, route.ServiceName, config.Token);
 
             var consulServiceDiscoveryProvider = new Consul(consulRegistryConfiguration, factory, consulFactory);
