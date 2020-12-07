@@ -9,6 +9,8 @@
     <FileVersion>16.0.1.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>16.0.1</Version>
+    <RepositoryUrl>https://github.com/ilonze/Ocelot.Extensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ilonze/Ocelot.Extensions</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
