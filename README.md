@@ -1,6 +1,7 @@
 # Ocelot.Extensions
 Extensions for Ocelot
 
+[![NuGet](https://img.shields.io/nuget/v/Ocelot.Provider.Consul.Extensions.svg)](https://www.nuget.org/packages/Ocelot.Provider.Consul.Extensions)
 
 ## Ocelot.Provider.Consul.Extensions
 Reqair any issue for Ocelot.Provider.Consul.
