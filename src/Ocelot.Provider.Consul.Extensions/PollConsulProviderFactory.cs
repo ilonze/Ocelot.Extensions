@@ -10,15 +10,12 @@ namespace Ocelot.Provider.Consul.Extensions
 {
     public static class PollConsulProviderFactory
     {
-        private static PollConsul _pollConsul;
-        private readonly static object _pollConsulLocker = new object();
+        private static ConcurrentDictionary<string, PollConsul> _cacheProviders = new ConcurrentDictionary<string, PollConsul>();
         public static ServiceDiscoveryFinderDelegate Get = (services, config, route) =>
         {
             var factory = services.GetService<IOcelotLoggerFactory>();
 
             var consulFactory = services.GetService<IConsulClientFactory>();
-
-            var factories = services.GetRequiredService<IEnumerable<ServiceDiscoveryProviderFactory>>();
 
             var consulRegistryConfiguration = new ConsulRegistryConfiguration(config.Scheme, config.Host, config.Port, route.ServiceName, config.Token);
 
@@ -26,17 +23,20 @@ namespace Ocelot.Provider.Consul.Extensions
 
             if (config.Type?.ToLower() == "pollconsul")
             {
-                if(_pollConsul == null)
+                if (_cacheProviders.ContainsKey(route.ServiceName))
                 {
-                    lock (_pollConsulLocker)
+                    if (_cacheProviders.TryGetValue(route.ServiceName, out var sprovider))
                     {
-                        if (_pollConsul == null)
-                        {
-                            _pollConsul = new PollConsul(config.PollingInterval, factory, consulServiceDiscoveryProvider);
-                        }
+                        return sprovider;
                     }
                 }
-                return _pollConsul;
+                var provider = new PollConsul(config.PollingInterval, factory, consulServiceDiscoveryProvider);
+                if (_cacheProviders.TryRemove(route.ServiceName, out var oldprovider))
+                {
+                    oldprovider.Dispose();
+                }
+                _cacheProviders.TryAdd(route.ServiceName, provider);
+                return provider;
             }
 
             return consulServiceDiscoveryProvider;
