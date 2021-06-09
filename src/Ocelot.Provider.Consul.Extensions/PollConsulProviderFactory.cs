@@ -10,7 +10,8 @@ namespace Ocelot.Provider.Consul.Extensions
 {
     public static class PollConsulProviderFactory
     {
-        private static ConcurrentDictionary<string, PollConsul> _cacheProviders = new ConcurrentDictionary<string, PollConsul>();
+        private static PollConsul _pollConsul;
+        private readonly static object _pollConsulLocker = new object();
         public static ServiceDiscoveryFinderDelegate Get = (services, config, route) =>
         {
             var factory = services.GetService<IOcelotLoggerFactory>();
@@ -23,20 +24,17 @@ namespace Ocelot.Provider.Consul.Extensions
 
             if (config.Type?.ToLower() == "pollconsul")
             {
-                if (_cacheProviders.ContainsKey(route.ServiceName))
+                if(_pollConsul == null)
                 {
-                    if (_cacheProviders.TryGetValue(route.ServiceName, out var sprovider))
+                    lock (_pollConsulLocker)
                     {
-                        return sprovider;
+                        if (_pollConsul == null)
+                        {
+                            _pollConsul = new PollConsul(config.PollingInterval, factory, consulServiceDiscoveryProvider);
+                        }
                     }
                 }
-                var provider = new PollConsul(config.PollingInterval, factory, consulServiceDiscoveryProvider);
-                if (_cacheProviders.TryRemove(route.ServiceName, out var oldprovider))
-                {
-                    oldprovider.Dispose();
-                }
-                _cacheProviders.TryAdd(route.ServiceName, provider);
-                return provider;
+                return _pollConsul;
             }
 
             return consulServiceDiscoveryProvider;
